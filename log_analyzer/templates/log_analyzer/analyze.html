@@ -1,0 +1,152 @@
+{% extends "log_analyzer/base.html" %}
+{% load static %}
+
+{% block title %}Log Analysis{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+    .log-card {
+        transition: all 0.3s ease;
+    }
+    .log-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-lg shadow">
+            <div class="text-gray-500">Total Logs</div>
+            <div class="text-2xl font-bold">{{ total_logs }}</div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <div class="text-gray-500">Malicious</div>
+            <div class="text-2xl font-bold text-red-600">{{ malicious_logs }}</div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <div class="text-gray-500">Suspicious</div>
+            <div class="text-2xl font-bold text-yellow-600">{{ suspicious_logs }}</div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <div class="text-gray-500">Normal</div>
+            <div class="text-2xl font-bold text-green-600">{{ normal_logs }}</div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Log Categories</h2>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Threat Timeline</h2>
+            <div class="chart-container">
+                <canvas id="timelineChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Threats -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="p-4 border-b">
+            <h2 class="text-xl font-semibold">Recent Threat Detections</h2>
+        </div>
+        <div class="divide-y">
+            {% for log in recent_threats %}
+            <div class="p-4 hover:bg-gray-50 log-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="font-medium {% if log.is_malicious %}text-red-600{% else %}text-yellow-600{% endif %}">
+                            {{ log.category }}
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1">{{ log.timestamp }}</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="px-2 py-1 text-xs rounded-full {% if log.is_malicious %}bg-red-100 text-red-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                            {% if log.is_malicious %}High Risk{% else %}Suspicious{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="mt-2 text-sm text-gray-700 truncate">{{ log.message }}</div>
+                <div class="mt-2 flex items-center text-sm">
+                    <span class="text-gray-500 mr-3"><i class="fas fa-user mr-1"></i> {{ log.username|default:"Unknown" }}</span>
+                    <span class="text-gray-500"><i class="fas fa-ip-address mr-1"></i> {{ log.source_ip }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <div class="p-4 text-center text-gray-500">No threats detected recently</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Category Chart
+    const ctx1 = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_labels|safe }},
+            datasets: [{
+                data: {{ category_data|safe }},
+                backgroundColor: [
+                    '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6',
+                    '#EC4899', '#14B8A6', '#F97316', '#84CC16', '#06B6D4'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+
+    // Timeline Chart
+    const ctx2 = document.getElementById('timelineChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: {{ timeline_labels|safe }},
+            datasets: [{
+                label: 'Threats',
+                data: {{ timeline_data|safe }},
+                borderColor: '#EF4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

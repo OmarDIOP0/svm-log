@@ -1,14 +1,80 @@
 {% extends "log_analyzer/base.html" %}
 
-{% block content %}
-<h2>Upload Log File</h2>
+{% block title %}Upload Logs{% endblock %}
 
-<form method="post" enctype="multipart/form-data" class="mt-4">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label for="logFile" class="form-label">Select log file</label>
-        <input class="form-control" type="file" id="logFile" name="log_file" required>
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- Header -->
+        <div class="bg-blue-600 px-6 py-4">
+            <h2 class="text-xl font-semibold text-white">
+                <i class="fas fa-file-upload mr-2"></i> Upload Log File
+            </h2>
+        </div>
+        
+        <!-- Form -->
+        <div class="p-6">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- File Upload Card -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-center w-full">
+                        <label for="logFile" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-blue-500 mb-3"></i>
+                                <p class="mb-2 text-sm text-gray-500">
+                                    <span class="font-semibold">Click to upload</span> or drag and drop
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    CSV, TXT or LOG files (MAX. 10MB)
+                                </p>
+                            </div>
+                            <input id="logFile" name="log_file" type="file" class="hidden" required />
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Info Box -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-blue-700">
+                                Your file should contain logs in CSV format with 'category' and 'log' columns.
+                                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Download sample</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        <i class="fas fa-upload mr-2"></i> Upload and Analyze
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Upload</button>
-</form>
+
+    <!-- Recent Uploads Section -->
+    <div class="mt-8 bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="bg-gray-50 px-6 py-3 border-b">
+            <h3 class="text-lg font-medium text-gray-900">
+                <i class="fas fa-history mr-2"></i> Recent Uploads
+            </h3>
+        </div>
+        <div class="p-4">
+            <div class="text-center text-gray-500 py-8">
+                <i class="fas fa-folder-open text-3xl mb-2"></i>
+                <p>No recent uploads</p>
+            </div>
+            <!-- You could add a list of recent uploads here -->
+        </div>
+    </div>
+</div>
+
 {% endblock %}

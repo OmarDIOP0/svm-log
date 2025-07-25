@@ -1,28 +1,38 @@
 {% extends "log_analyzer/base.html" %}
+{% load django_tables2 %}
+
+{% block title %}Log List{% endblock %}
 
 {% block content %}
-<h2>All Logs</h2>
+<div class="bg-white shadow rounded-lg p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Log Entries</h1>
+        <a href="{% url 'upload_logs' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+            <i class="fas fa-plus mr-2"></i> Add Logs
+        </a>
+    </div>
 
-<table class="table table-striped mt-3">
-    <thead>
-        <tr>
-            <th>Timestamp</th>
-            <th>IP</th>
-            <th>Username</th>
-            <th>Status</th>
-            <th>Malicious</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for log in logs %}
-        <tr class="{% if log.is_malicious %}table-danger{% endif %}">
-            <td>{{ log.timestamp }}</td>
-            <td>{{ log.source_ip }}</td>
-            <td>{{ log.username|default:"-" }}</td>
-            <td>{{ log.status }}</td>
-            <td>{% if log.is_malicious %}Yes{% else %}No{% endif %}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <div class="overflow-x-auto">
+        {% render_table table %}
+    </div>
+
+    <div class="mt-6 flex justify-between items-center">
+        <div class="text-sm text-gray-600">
+            Showing {{ table.page.start_index }} to {{ table.page.end_index }} of {{ table.paginator.count }} entries
+        </div>
+        <div class="flex space-x-2">
+            {% if table.page.has_previous %}
+                <a href="{% url 'logs_list' %}?page={{ table.page.previous_page_number }}" class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
+                    Previous
+                </a>
+            {% endif %}
+            
+            {% if table.page.has_next %}
+                <a href="{% url 'logs_list' %}?page={{ table.page.next_page_number }}" class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
+                    Next
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}
