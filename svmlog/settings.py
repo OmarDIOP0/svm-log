@@ -38,23 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'auth_app',
-    'main',
+    'log_analyzer',
     'django_tables2',
-    'chartjs',
-    'crispy_forms',
-    'crispy_bootstrap5',
 
 ]
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap5"
-
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'auth_app/static')]
-
-LOGIN_REDIRECT_URL = 'dashboard'
-LOGOUT_REDIRECT_URL = 'login'
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'log_analyzer/static']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
