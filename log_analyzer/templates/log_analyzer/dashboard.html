@@ -1,0 +1,46 @@
+{% extends "log_analyzer/base.html" %}
+
+{% block content %}
+<h2>Dashboard</h2>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Logs</h5>
+                <p class="display-4">{{ total_logs }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Malicious Logs</h5>
+                <p class="display-4 text-danger">{{ malicious_logs }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="mt-4">Recent Logs</h3>
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>IP</th>
+            <th>Username</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in recent_logs %}
+        <tr class="{% if log.is_malicious %}table-danger{% endif %}">
+            <td>{{ log.timestamp }}</td>
+            <td>{{ log.source_ip }}</td>
+            <td>{{ log.username|default:"-" }}</td>
+            <td>{{ log.status }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
