@@ -1,0 +1,28 @@
+{% extends "log_analyzer/base.html" %}
+
+{% block content %}
+<h2>All Logs</h2>
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>IP</th>
+            <th>Username</th>
+            <th>Status</th>
+            <th>Malicious</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr class="{% if log.is_malicious %}table-danger{% endif %}">
+            <td>{{ log.timestamp }}</td>
+            <td>{{ log.source_ip }}</td>
+            <td>{{ log.username|default:"-" }}</td>
+            <td>{{ log.status }}</td>
+            <td>{% if log.is_malicious %}Yes{% else %}No{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
