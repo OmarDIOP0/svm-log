@@ -10,4 +10,5 @@ urlpatterns = [
     path('logs/<int:pk>/', views.log_detail, name='log_detail'),
     path('upload/', views.upload_logs, name='upload_logs'),
     path('analyze/', views.analyze_logs, name='analyze_logs'),
+    # path('logs/clear/', views.clear_logs, name='clear_logs'),
 ]

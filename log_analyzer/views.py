@@ -13,8 +13,10 @@ from . import tests
 import json
 from django.http import HttpResponse
 from django.urls import reverse
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 
-
+@cache_page(60 * 15) 
 def dashboard(request):
     # Statistiques principales
     total_logs = AuthLog.objects.count()
@@ -44,35 +46,6 @@ def dashboard(request):
     
     return render(request, 'log_analyzer/dashboard.html', context)
 
-# def log_list(request):
-#     logs = AuthLog.objects.all().order_by('-timestamp')
-    
-#     # Filtrage
-#     category_filter = request.GET.get('category')
-#     if category_filter:
-#         logs = logs.filter(category=category_filter)
-    
-#     ip_filter = request.GET.get('ip')
-#     if ip_filter:
-#         logs = logs.filter(source_ip=ip_filter)
-    
-#     malicious_filter = request.GET.get('malicious')
-#     if malicious_filter == 'true':
-#         logs = logs.filter(is_malicious=True)
-#     elif malicious_filter == 'false':
-#         logs = logs.filter(is_malicious=False)
-    
-#     # Pagination
-#     paginator = Paginator(logs, 25)
-#     page_number = request.GET.get('page')
-#     page_obj = paginator.get_page(page_number)
-    
-#     context = {
-#         'page_obj': page_obj,
-#         'category_choices': AuthLog.CATEGORY_CHOICES,
-#     }
-    
-#     return render(request, 'log_analyzer/log_list.html', context)
 
 def log_detail(request, pk):
     log = AuthLog.objects.get(pk=pk)
